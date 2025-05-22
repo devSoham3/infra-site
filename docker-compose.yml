@@ -6,8 +6,10 @@ services:
       context: /home/devsoham3/GitHappens/portfolio-site
       dockerfile: Dockerfile
     container_name: portfolio-app
-    ports:
-      - "3000:3000"  # Optional: only if you want direct access
+    expose:
+      - "3000"
+    # ports:
+      # - "3000:3000"  # Optional: only if you want direct access
     networks:
       - app-network
 
