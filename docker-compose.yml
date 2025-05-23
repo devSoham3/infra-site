@@ -4,6 +4,7 @@ services:
   portfolio-site:
     image: ghcr.io/devsoham3/portfolio-site:latest
     container_name: portfolio-app
+    restart: unless-stopped
     expose:
       - "3000"
     networks:
@@ -12,6 +13,7 @@ services:
   nginx:
     image: nginx
     container_name: nginx-reverse-proxy
+    restart: unless-stopped
     ports:
       - "80:80"
       # - "443:443"
