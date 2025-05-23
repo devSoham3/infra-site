@@ -1,0 +1,117 @@
+version: "3.8"
+
+services:
+  # Portfolio Site
+  portfolio-site:
+    build:
+      context: ./apps/portfolio-site
+      dockerfile: Dockerfile.prod  # Production-optimized Dockerfile
+    container_name: portfolio-app
+    restart: unless-stopped
+    expose:
+      - "3000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Project 1
+  project1-app:
+    build:
+      context: ./apps/project1
+      dockerfile: Dockerfile.prod
+    container_name: project1-app
+    restart: unless-stopped
+    expose:
+      - "4000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - app-network
+
+  # Project 2
+  project2-app:
+    build:
+      context: ./apps/project2
+      dockerfile: Dockerfile.prod
+    container_name: project2-app
+    restart: unless-stopped
+    expose:
+      - "5000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - app-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-reverse-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/sites:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - portfolio-site
+      - project1-app
+      - project2-app
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Certbot for SSL certificates
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot --webroot-path=/var/www/certbot --email your-email@example.com --agree-tos --no-eff-email -d yourdomain.com -d www.yourdomain.com
+    depends_on:
+      - nginx
+
+  # Optional: Monitoring with Prometheus/Grafana
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - app-network
+
+  # Optional: Log aggregation
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.15.0
+    container_name: filebeat
+    volumes:
+      - ./nginx/logs:/var/log/nginx:ro
+      - ./monitoring/filebeat.yml:/usr/share/filebeat/filebeat.yml
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+    name: production-network
+
+volumes:
+  nginx-logs:
+  certbot-conf:
+  certbot-www:
