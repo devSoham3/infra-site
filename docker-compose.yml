@@ -2,14 +2,10 @@ version: "3.8"
 
 services:
   portfolio-site:
-    build:
-      context: /home/devsoham3/GitHappens/portfolio-site
-      dockerfile: Dockerfile
+    image: ghcr.io/devsoham3/portfolio-site:latest
     container_name: portfolio-app
     expose:
       - "3000"
-    # ports:
-      # - "3000:3000"  # Optional: only if you want direct access
     networks:
       - app-network
 
