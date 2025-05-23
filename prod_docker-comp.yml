@@ -34,20 +34,6 @@ services:
     networks:
       - app-network
 
-  # Project 2
-  project2-app:
-    build:
-      context: ./apps/project2
-      dockerfile: Dockerfile.prod
-    container_name: project2-app
-    restart: unless-stopped
-    expose:
-      - "5000"
-    environment:
-      - NODE_ENV=production
-    networks:
-      - app-network
-
   # Nginx Reverse Proxy
   nginx:
     image: nginx:alpine
