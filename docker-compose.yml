@@ -101,6 +101,7 @@ networks:
     name: portfolio-network
   monitoring-network:
     driver: bridge
+    name: portfolio-monitor
 
 volumes:
   grafana-storage:
