@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   portfolio-site:
     image: ghcr.io/devsoham3/portfolio-site:latest
