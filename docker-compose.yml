@@ -41,9 +41,9 @@ services:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
     restart: unless-stopped
-    # privileged: true
-    # devices:
-    #   - /dev/kmsg
+    privileged: true
+    devices:
+      - /dev/kmsg
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -102,10 +102,10 @@ services:
 networks:
   app-network:
     driver: bridge
-    name: portfolio-network
+    # name: portfolio-network
   monitoring-network:
     driver: bridge
-    name: portfolio-monitor
+    # name: portfolio-monitor
 
 volumes:
   grafana-storage:
