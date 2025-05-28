@@ -51,15 +51,16 @@ services:
     devices:
       - /dev/kmsg
     volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
+      - /:/rootfs:ro                     # Root filesystem access
+      - /var/run:/var/run:ro             # Runtime socket access
+      - /sys:/sys:ro                     # System metrics access
+      - /var/lib/docker/:/var/lib/docker:ro  # Docker container access
+      - /dev/disk/:/dev/disk:ro          # Disk metrics access
+      - /etc/machine-id:/etc/machine-id:ro    # System UUID access
     expose:
       - "8080"
     ports:
-      - "127.0.0.1:8080:8080"  # Only locally accessible
+      - "127.0.0.1:8080:8080"
     networks:
       - monitoring-network
 
