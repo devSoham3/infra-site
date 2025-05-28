@@ -47,9 +47,9 @@ services:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
     restart: unless-stopped
-    privileged: true
-    devices:
-      - /dev/kmsg
+    # privileged: true
+    # devices:
+    #   - /dev/kmsg
     volumes:
       - /:/rootfs:ro                     # Root filesystem access
       - /var/run:/var/run:ro             # Runtime socket access
