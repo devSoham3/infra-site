@@ -86,6 +86,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--web.external-url=/prometheus'
+      - '--web.route-prefix=/prometheus'
     expose:
       - "9090"
     ports:
