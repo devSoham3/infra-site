@@ -141,6 +141,23 @@ This lets nginx route `proxy_pass http://host-gateway:8500` to port `8500` on th
 
 WebSocket support (`Upgrade` / `Connection` headers) is pre-configured on these proxy blocks, making them compatible with Streamlit and other WebSocket-based apps out of the box.
 
+> [!IMPORTANT]
+> **Apps must bind to `0.0.0.0`, not `127.0.0.1`.**
+> The nginx container routes to the host via the Docker bridge network. The loopback interface (`127.0.0.1`) on the host is not reachable from inside the container, so apps bound only to loopback will return a 502.
+>
+> ```bash
+> # FastAPI/uvicorn — default is 127.0.0.1, must override
+> uvicorn main:app --host 0.0.0.0 --port 8500
+>
+> # Streamlit — default is already 0.0.0.0, no change needed
+> streamlit run app.py --server.port 8600
+>
+> # docker run — publishes to 0.0.0.0 by default
+> docker run -p 8700:8700 your-image
+> ```
+>
+> This applies regardless of which OS user starts the process — nginx routes by port number at the network level, not by user.
+
 ## Certificate Renewal
 
 Certbot auto-renewal is handled by the `certbot` container. To manually trigger a renewal:
